@@ -1,5 +1,4 @@
 def agrisolum_formatter(df):
-    print(df.columns)
     df = df.rename(columns={'Descrição da Amostra': 'id', 'Profundidade': 'prof', 'Al3+': 'Al', 'Areia Fina': 'Areia fina',
                             'Areia Grossa': 'Areia grossa', 'Areia Total': 'Areia total', 'Argila': 'Argila', 'B': 'B',
                             'Carbono (C)': 'C', 'Ca2+': 'Ca', 'CTC pH 7,0': 'CTC', 'Cu2+': 'Cu', 'Fe2+': 'Fe', 'K2+': 'K',

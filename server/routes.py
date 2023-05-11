@@ -1,5 +1,8 @@
 from fastapi import APIRouter, UploadFile, File
+from fastapi.responses import JSONResponse
 import pandas as pd
+from starlette.status import HTTP_400_BAD_REQUEST
+from zipfile import BadZipfile
 from .labs.agrisolum import agrisolum_formatter
 from io import BytesIO
 from fastapi.responses import StreamingResponse
@@ -20,16 +23,28 @@ def read_file(file: UploadFile):
 async def agrisolum(file: UploadFile = File(...)):
     filename = file.filename if file.filename else ""
     if not filename.endswith((".csv", ".xlsx", ".xls")):
-        return {"Erro": "Extensão inválida"}
-    df = read_file(file)
+        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Extensão inválida"});
+        print('"error": "Extensão inválida" ')
+        return response
 
-    df_formatado = agrisolum_formatter(df)
+    try:
+        openFile = read_file(file)
+        df_formatado = agrisolum_formatter(openFile)
 
-    output = BytesIO()
-    df_formatado.to_excel(output, index=False)
-    output.seek(0)
+        output = BytesIO()
+        df_formatado.to_excel(output, index=False)
+        output.seek(0)
 
-    response = StreamingResponse(
-        output, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    response.headers["Content-Disposition"] = f"attachment; filename=processed_{filename}"
-    return response
+        response = StreamingResponse(
+                output, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response.headers["Content-Disposition"] = f"attachment; filename=processed_{filename}"
+        print("Sucesso")
+        return response
+    except BadZipfile:
+        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Erro ao ler o arquivo"});
+        print('"error": "Erro ao ler o arquivo"')
+        return response
+    except:
+        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Arquivo nao pertence ao lab"});
+        print('"error": "Arquivo nao pertence ao lab"')
+        return response
