@@ -23,4 +23,4 @@ async def healthCheck():
         "Working as expected"
     }
 
-app.include_router(LabRouter, prefix='/api/lab')
+app.include_router(LabRouter, prefix='/api')

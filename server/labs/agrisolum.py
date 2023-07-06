@@ -1,4 +1,7 @@
-def agrisolum_formatter(df):
+from datetime import datetime
+import pytz
+
+def agrisolum2inceres(df):
     df = df.rename(columns={'Descrição da Amostra': 'id', 'Profundidade': 'prof', 'Al3+': 'Al', 'Areia Fina': 'Areia fina',
                             'Areia Grossa': 'Areia grossa', 'Areia Total': 'Areia total', 'Argila': 'Argila', 'B': 'B',
                             'Carbono (C)': 'C', 'Ca2+': 'Ca', 'CTC pH 7,0': 'CTC', 'Cu2+': 'Cu', 'Fe2+': 'Fe', 'K2+': 'K',
@@ -69,7 +72,35 @@ def agrisolum_formatter(df):
     return df
 
 
+def agrisolum2datafarm(df):
+    df = df.rename(columns={'nº Laborat.' : 'Codigo Amostra', 'Proprietário': 'Produtor', 'Propriedade': 'Fazenda',
+                            'Lote / Talhão': 'Talhão', 'Descrição da Amostra': 'Nro do Ponto', 'pH CaCl2': 'pH (CaCl2)',
+                            'H+ + Al3+': 'Hidrogênio + Alumínio', 'Al3+': 'Alumínio', 'Ca2+': 'Cálcio', 'Mg2+': 'Magnésio',
+                            'K2+': 'Potássio (Resina)', 'SB': 'Soma de bases', 'CTC pH 7,0': 'Capac. de troca de cátions', 
+                            'Matéria Orgãnica (MO)': 'Matéria Orgânica', 'P meh': 'Fósforo (Mehlich)', 'S': 'Enxofre',
+                            'B': 'Boro', 'Cu2+': 'Cobre', 'Fe2+': 'Ferro', 'Mn2+': 'Manganês', 'Zn2+': 'Zinco',
+                            'Ca': '% de Cálcio na CTC', 'Mg': '% de Magnésio na CTC', 'K': '% de Potássio na CTC',
+                            'm': 'Saturação por Al', 'H': '% de H°+Al ³  na C.T.C.', 'v': 'Saturação por bases',
+                            'Mg/K': 'Relação Mg/K', 'Argila': 'Argila', 'Silte': 'Silte', 'Areia Total': 'Areia Total'
+                            })
+
+    df['Data'] = datetime.now().astimezone(pytz.timezone('Etc/GMT-3')).strftime('%d/%m/%Y')
+    df = df.loc[:, ['Data', 'Codigo Amostra', 'Produtor', 'Fazenda', 'Talhão', 'Nro do Ponto',
+                    'Profundidade', 'pH (H2O)', 'pH (CaCl2)', 'Hidrogênio + Alumínio', 'Alumínio',
+                    'Cálcio', 'Magnésio', 'Potássio (Resina)', 'Soma de bases', 
+                    'Capac. de troca de cátions', 'Matéria Orgânica', 'Fósforo (Mehlich)', 'Enxofre',
+                    'Boro', 'Cobre', 'Ferro', 'Manganês', 'Zinco', '% de Cálcio na CTC', '% de Magnésio na CTC',
+                    '% de Potássio na CTC', 'Saturação por Al', '% de H°+Al ³  na C.T.C.', 'Saturação por bases',
+                    'Relação Mg/K', 'Argila', 'Silte', 'Areia Total']]
+
+    df = insert_row(0, df, ['','','','','','','','-','-','cmolc/dm3','cmolc/dm3','cmolc/dm3','cmolc/dm3',
+                            'cmolc/dm3','cmolc/dm3','cmolc/dm3','%','mg/dm3','mg/dm3','mg/dm3','mg/dm3',
+                            'mg/dm3','mg/dm3','mg/dm3','%','%','%','%','%','%','-','%','%','%'])
+
+    return df
+
 def insert_row(row_number, df, row_value):
+
     start_upper = 0
 
     end_upper = row_number

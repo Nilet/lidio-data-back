@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 import pandas as pd
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
 from zipfile import BadZipfile
-from .labs.agrisolum import agrisolum_formatter
+from .labs.agrisolum import agrisolum2datafarm, agrisolum2inceres
 from io import BytesIO
 from fastapi.responses import StreamingResponse
 
@@ -19,8 +19,8 @@ def read_file(file: UploadFile):
         return pd.read_excel(file.file, dtype=str, header=1)
 
 
-@router.post("/agrisolum")
-async def agrisolum(file: UploadFile = File(...)):
+@router.post("/agrisolum/{destLab}")
+async def agrisolum(file: UploadFile = File(...), destLab = ""):
     filename = file.filename if file.filename else ""
     if not filename.endswith((".csv", ".xlsx", ".xls")):
         response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Extensão inválida"});
@@ -28,8 +28,15 @@ async def agrisolum(file: UploadFile = File(...)):
         return response
 
     try:
+        print(f"agrisolum/{destLab}")
         openFile = read_file(file)
-        df_formatado = agrisolum_formatter(openFile)
+        if destLab == "inceres":
+            df_formatado = agrisolum2inceres(openFile)
+        elif destLab == "datafarm":
+            df_formatado = agrisolum2datafarm(openFile)
+        else: 
+            response = JSONResponse(status_code=HTTP_403_FORBIDDEN, content={"error": "Laboratorio final nao existe"})
+
 
         output = BytesIO()
         df_formatado.to_excel(output, index=False)
@@ -44,7 +51,7 @@ async def agrisolum(file: UploadFile = File(...)):
         response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Erro ao ler o arquivo"});
         print('"error": "Erro ao ler o arquivo"')
         return response
-    except:
-        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Arquivo nao pertence ao lab"});
-        print('"error": "Arquivo nao pertence ao lab"')
-        return response
+    # except:
+    #     response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Arquivo nao pertence ao lab"});
+    #     print('"error": "Arquivo nao pertence ao lab"')
+    #     return response
