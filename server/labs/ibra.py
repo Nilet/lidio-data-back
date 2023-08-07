@@ -21,14 +21,14 @@ def ibra2inceres(df):
                             })
     
     df['MOS'] = df['MOS'].astype(float) / 10
-    df['C'] = convert_g_to_cmol(df['C'])
+    df['C'] = df['C'].str.replace(",", ".").astype(float).apply(convert_g_to_cmol) / 120
     df['Ca'] = df['Ca'].astype(float) / 10
     df['CTC'] = df['CTC'].str.replace(",", ".").astype(float) / 10
     df['H'] = df['H'].str.replace(",", ".").astype(float) / 10
     df['H/Al'] = df['H/Al'].str.replace(",", ".").astype(float) / 10
     df['K'] = df['K'].str.replace(",", ".").astype(float) / 10
     df['Mg'] = df['Mg'].str.replace(",", ".").astype(float) / 10
-    df['N'] = convert_percent_to_cmol(df['N'])
+    df['N'] = df['N'].str.replace(",", ".").astype(float).apply(convert_percent_to_cmol) / 140
     df['Na'] = df['Na'].str.replace(",", ".").astype(float) / 10
     df['SB'] = df['SB'].str.replace(",", ".").astype(float) / 10
     df['Silte'] = df['Silte'].str.replace(",", ".").astype(float) / 10
