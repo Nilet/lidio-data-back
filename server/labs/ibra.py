@@ -31,6 +31,8 @@ def ibra2inceres(df):
     df['Na'] = df['Na'].str.replace(",", ".").astype(float) / 10
     df['SB'] = df['SB'].str.replace(",", ".").astype(float) / 10
     df['Silte'] = df['Silte'].str.replace(",", ".").astype(float) / 10
+    df['Areia total'] = df['Areia total'].str.replace(",", ".").astype(float) / 10
+    df['Argila'] = df['Argila'].str.replace(",", ".").astype(float) / 10
     df['t']= df['Ca'] + df['Mg']+ df['K'] + df['Al'].str.replace(",",".").astype(float)
     
     df['AlS'] =''
@@ -110,7 +112,7 @@ def insert_row(row_number, df, row_value):
 
     df = df.sort_index()
 
-    df = df.drop(1)
+    # df = df.drop(1)
 
     return df
 
