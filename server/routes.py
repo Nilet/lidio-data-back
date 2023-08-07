@@ -15,7 +15,7 @@ router = APIRouter()
 def read_file(file: UploadFile):
     filename = file.filename if file.filename else ""
     if filename.endswith(".csv"):
-        return pd.read_csv(file.file, dtype=str, encoding='latin1', header=0, delimiter=';')
+        return pd.read_csv(file.file, dtype=str, encoding='latin-1', header=0, delimiter=';')
     elif filename.endswith((".xlsx", ".xls")):
         return pd.read_excel(file.file, dtype=str, header=1)
 
