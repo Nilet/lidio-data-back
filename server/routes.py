@@ -6,6 +6,7 @@ from zipfile import BadZipfile
 from .labs.agrisolum import agrisolum2datafarm, agrisolum2inceres
 from io import BytesIO
 from fastapi.responses import StreamingResponse
+from .labs.ibra import ibra2inceres
 
 
 router = APIRouter()
@@ -55,3 +56,35 @@ async def agrisolum(file: UploadFile = File(...), destLab = ""):
     #     response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Arquivo nao pertence ao lab"});
     #     print('"error": "Arquivo nao pertence ao lab"')
     #     return response
+
+@router.post("/ibra/{destLab}")
+async def ibra(file: UploadFile = File(...), destLab = ""):
+    filename = file.filename if file.filename else ""
+    if not filename.endswith((".csv", ".xlsx", ".xls")):
+        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Extensão inválida"});
+        print('"error": "Extensão inválida" ')
+        return response
+
+    try:
+        print(f"ibra/{destLab}")
+        openFile = read_file(file)
+        if destLab == "inceres":
+            df_formatado = ibra2inceres(openFile)
+        else: 
+            response = JSONResponse(status_code=HTTP_403_FORBIDDEN, content={"error": "Laboratorio final nao existe"})
+
+
+        output = BytesIO()
+        df_formatado.to_excel(output, index=False)
+        output.seek(0)
+
+        response = StreamingResponse(
+                output, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response.headers["Content-Disposition"] = f"attachment; filename=processed_{filename}"
+        print("Sucesso")
+        return response
+    except BadZipfile:
+        response = JSONResponse(status_code=HTTP_400_BAD_REQUEST,content={"error": "Erro ao ler o arquivo"});
+        print('"error": "Erro ao ler o arquivo"')
+        return response
+
