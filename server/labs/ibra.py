@@ -1,9 +1,11 @@
 def ibra2inceres(df):
-    df.drop(1)
-    df['id'] = df['Identificacao'].str.split(' | ').str[0]
+    df = df.drop(0)
+    df = df.drop(1)
 
-    df['Prof'] = df['Identificacao'].str.split('Prof.: ').str[1]
-
+    df['id'] = df['Identificação'].str.split(' | ').str[0]
+    
+    df['prof'] = df['Identificação'].str.split('Prof.: ').str[1]
+    
     df.rename(columns={'Prof': 'Prof'}, inplace=True)
     df = df.rename(columns={'Alumínio Trocável': 'Al', 'Areia Total': 'Areia total', 'Argila': 'Argila', 'Boro (Água Quente)': 'B',
                             'Carbono Orgânico Total': 'C', 'Cálcio (Resina)': 'Ca', 'Capac. de troca de cátions': 'CTC', 
@@ -16,20 +18,20 @@ def ibra2inceres(df):
                             '% de Potássio na CTC': 'K%', '% de Magnésio na CTC': 'Mg%', '% de Sódio na C.T.C.': 'Na%', 'Soma de bases': 'SB',
                             'Silte': 'Silte', 'Saturação por bases': 'V%', 'Zinco (DTPA)': 'Zn'
                             })
-
-    df['MOS'] = df['MOS'] / 10
+    
+    df['MOS'] = df['MOS'].astype(float) / 10
     df['C'] = convert_g_to_cmol(df['C'])
-    df['Ca'] = df['Ca'] / 10
-    df['CTC'] = df['CTC'] / 10
-    df['H'] = df['H'] / 10
-    df['H/Al'] = df['H/Al'] / 10
-    df['K'] = df['K'] / 10
-    df['Mg'] = df['Mg'] / 10
+    df['Ca'] = df['Ca'].astype(float) / 10
+    df['CTC'] = df['CTC'].str.replace(",", ".").astype(float) / 10
+    df['H'] = df['H'].str.replace(",", ".").astype(float) / 10
+    df['H/Al'] = df['H/Al'].str.replace(",", ".").astype(float) / 10
+    df['K'] = df['K'].str.replace(",", ".").astype(float) / 10
+    df['Mg'] = df['Mg'].str.replace(",", ".").astype(float) / 10
     df['N'] = convert_percent_to_cmol(df['N'])
-    df['Na'] = df['Na'] / 10
-    df['SB'] = df['SB'] / 10
-    df['Silte'] = df['Silte'] / 10
-    df['t'] = df['Ca'] + df['Mg'] + df['K'] + df['Al']
+    df['Na'] = df['Na'].str.replace(",", ".").astype(float) / 10
+    df['SB'] = df['SB'].str.replace(",", ".").astype(float) / 10
+    df['Silte'] = df['Silte'].str.replace(",", ".").astype(float) / 10
+    df['t']= df['Ca'] + df['Mg']+ df['K'] + df['Al'].str.replace(",",".").astype(float)
     
     df['AlS'] =''
     df['Areia fina'] = ''
@@ -66,7 +68,7 @@ def ibra2inceres(df):
     df['Si'] = ''
     df['SO4'] = ''
     df['S/P'] = ''
-
+    
     df = df.loc[:, ['id', 'prof', 'Al', 'AlS', 'Areia fina', 'Areia grossa',
                     'Areia total', 'Argila', 'B', 'C', 'Ca', 'Ca+Mg', 'CaS', 'CEa', 'Cl', 'CO3',
                     'CTC', 'Cu', 'Ds', 'Fe', 'Fe/Mn', 'FeO', 'H', 'H/Al', 'HCO3', 'K', 'K mg', 'K/Na',
@@ -74,18 +76,14 @@ def ibra2inceres(df):
                     'pH Agua', 'pH CaCl2', 'ph_kcl', 'ph_smp', 'P mehl', 'PO', 'prem', 'P res', 'P_Total',
                     'P/Zn', 'RAS', 'Ca/K', 'Ca/Mg', 'Ca+Mg/K', 'Mg/K', 'S', 'Al%', 'Ca%', 'H%', 'H/Al%',
                     'K%', 'Mg%', 'Na%', 'SB', 'Si', 'Silte', 'SO4', 'S/P', 't', 'V%', 'Zn']]
-
-    df = insert_row(0, df, ['', '', 'cmolc/dm³', 'meq/L', 'metros', '%',
-                            '%', '%', '%', 'ppm', 'cmolc/dm³', 'cmolc/dm³', 'cmolc/dm³',
-                                           'meq/L', 'dS/m', 'ppm', 'meq/L', 'cmolc/dm³', 'ppm', 'g/dm³',
-                                           'ppm', 'Sem Unidade', '%', 'cmolc/dm³', 'cmolc/dm³', 'meq/L',
-                                           'cmolc/dm³', 'ppm', 'Sem Unidade', 'meq/L', '%',	'cmolc/dm³',
-                                           'meq/L',	'ppm', '%',	'cmolc/dm³', 'cmolc/dm³', 'meq/L',
-                                           'meq/L',	'meq/L', 'ppm', 'ppm', 'Sem Unidade', 'Sem Unidade',
-                                           'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'ppm', 'ppm', 'ppm', 'ppm', 'ppm', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade',
-                                           'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'ppm', '%', '%',
-                                           '%', '%', '%', '%', '%', 'cmolc/dm³', '%', '%', 'meq/L', 'Sem Unidade',
-                                           'cmolc/dm³', '%', 'ppm'])
+    
+    df = insert_row(0, df, ['', '', 'cmolc/dm³','meq/L', '%', '%', '%', '%', 'ppm', 'cmolc/dm³','cmolc/dm³', 'cmolc/dm³',
+                            'meq/L', 'dS/m', 'ppm', 'meq/L', 'cmolc/dm³', 'ppm', 'g/dm³', 'ppm', 'Sem Unidade', '%',
+                            'cmolc/dm³', 'cmolc/dm³', 'meq/L', 'cmolc/dm³', 'ppm', 'Sem Unidade', 'meq/L', '%', 'cmolc/dm³',
+                            'meq/L', 'ppm', '%', 'cmolc/dm³', 'cmolc/dm³', 'meq/L', 'meq/L', 'meq/L', 'ppm', 'ppm',
+                            'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'ppm', 'ppm', 'ppm', 'ppm', 'ppm',
+                            'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'Sem Unidade', 'ppm', 
+                            '%','%','%','%','%','%','%', 'cmolc/dm³', '%', '%', 'meq/L', 'Sem Unidade', 'cmolc/dm³', '%', 'ppm'])
     return df
 
 def insert_row(row_number, df, row_value):
