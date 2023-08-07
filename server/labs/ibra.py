@@ -5,6 +5,7 @@ def ibra2inceres(df):
     df['id'] = df['Identificação'].str.split(' | ').str[0]
     
     df['prof'] = df['Identificação'].str.split('Prof.: ').str[1]
+    df['prof'] = df['prof'].apply(fix_prof)
     
     df.rename(columns={'Prof': 'Prof'}, inplace=True)
     df = df.rename(columns={'Alumínio Trocável': 'Al', 'Areia Total': 'Areia total', 'Argila': 'Argila', 'Boro (Água Quente)': 'B',
@@ -123,3 +124,11 @@ def convert_g_to_cmol(g_per_dm3):
 def convert_percent_to_cmol(percent):
     cmol_per_percent = percent * 10
     return convert_g_to_cmol(cmol_per_percent)
+
+def fix_prof(value):
+    if value == "20 a 40 cm":
+        return "20-40"
+    elif value == "0 a 20 cm":
+        return "0-20"
+    else:
+        return value
