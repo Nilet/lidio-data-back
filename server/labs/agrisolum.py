@@ -29,7 +29,7 @@ def agrisolum2inceres(df):
     df['K mg'] = ''
     df['K/Na'] = ''
     df['KS'] = ''
-    df['m%'] = ''
+    df['m%'] = (df['Al'].astype(float) * 100) / df['t'].astype(float)
     df['MgS'] = ''
     df['N'] = ''
     df['NaS'] = ''

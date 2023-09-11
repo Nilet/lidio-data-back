@@ -17,7 +17,7 @@ def read_file(file: UploadFile, skipOneLine):
     if filename.endswith(".csv"):
         return pd.read_csv(file.file, dtype=str, encoding='ISO-8859-1', header=0, delimiter=';')
     elif filename.endswith((".xlsx", ".xls")):
-        return pd.read_excel(file.file, dtype=str, header= 1 if skipOneLine else 0)
+        return pd.read_excel(file.file, dtype=str, header=1 if skipOneLine else 0)
 
 
 @router.post("/agrisolum/{destLab}")
