@@ -1,3 +1,6 @@
+from pytz import exceptions
+
+
 def ibra2inceres(df):
     df = df.drop(0)
     df = df.drop(1)
@@ -36,10 +39,19 @@ def ibra2inceres(df):
         float).apply(convert_percent_to_cmol) / 140
     df['Na'] = df['Na'].str.replace(",", ".").astype(float) / 10
     df['SB'] = df['SB'].str.replace(",", ".").astype(float) / 10
-    df['Silte'] = df['Silte'].str.replace(",", ".").astype(float) / 10
-    df['Areia total'] = df['Areia total'].str.replace(
-        ",", ".").astype(float) / 10
-    df['Argila'] = df['Argila'].str.replace(",", ".").astype(float) / 10
+    try:
+        df['Silte'] = df['Silte'].str.replace(",", ".").astype(float) / 10
+    except:
+        pass
+    try:
+        df['Areia total'] = df['Areia total'].str.replace(
+            ",", ".").astype(float) / 10
+    except:
+        pass
+    try:
+        df['Argila'] = df['Argila'].str.replace(",", ".").astype(float) / 10
+    except:
+        pass
     df['t'] = df['Ca'] + df['Mg'] + df['K'] + \
         df['Al'].str.replace(",", ".").astype(float)
 
