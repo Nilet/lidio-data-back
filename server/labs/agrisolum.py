@@ -3,14 +3,17 @@ import pytz
 
 
 def agrisolum2inceres(df):
+    for column in df.columns:
+        print(column)
+
     df = df.rename(columns={'Descrição da Amostra': 'id', 'Profundidade': 'prof', 'Al3+': 'Al', 'Areia Fina': 'Areia fina',
                             'Areia Grossa': 'Areia grossa', 'Areia Total': 'Areia total', 'Argila': 'Argila', 'B': 'B',
-                            'Carbono (C)': 'C', 'Ca2+': 'Ca', 'CTC pH 7,0': 'CTC', 'Cu2+': 'Cu', 'Fe2+': 'Fe', 'K2+': 'K',
-                            'Mg2+': 'Mg', 'Mn2+': 'Mn', 'Matéria Orgãnica (MO)': 'MOS', 'Na+': 'Na', 'pH (H2O)': 'pH Agua',
+                            'Carbono (C)': 'C', 'Ca2+': 'Ca', 'CTC pH 7,0': 'CTC', 'Cu2+': 'Cu', 'Fe2+': 'Fe', 'K+': 'K',
+                            'Mg2+': 'Mg', 'Mn2+': 'Mn', 'Matéria Orgânica (MO)': 'MOS', 'Na+': 'Na', 'pH (H2O)': 'pH Agua',
                             'pH CaCl2': 'pH CaCl2', 'pH SMP': 'ph_smp', 'P meh': 'P mehl', 'P rem': 'prem', 'P res': 'P res',
                             'Ca/K': 'Ca/K', 'Ca/Mg': 'Ca/Mg', 'K/Ca+Mg': 'Ca+Mg/K', 'Mg/K': 'Mg/K', 'S': 'S', 'm': 'Al%',
                             'Ca': 'Ca%', 'H': 'H%', 'K': 'K%', 'Mg': 'Mg%', 'SB': 'SB', 'Silte': 'Silte', 'CTC Efetiva': 't',
-                            'v': 'V%', 'Zn2+': 'Zn'
+                            'V': 'V%', 'Zn2+': 'Zn'
                             })
 
     df['AlS'] = ''
