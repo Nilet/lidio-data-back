@@ -33,10 +33,10 @@ def agrisolum2inceres(df):
     df['K mg'] = ''
     df['K/Na'] = ''
     df['KS'] = ''
-    if df['Al'] == "ns" or df['t'] == "ns":
-        df['m%'] = "ns"
-    else:
+    try:
         df['m%'] = (df['Al'].astype(float) * 100) / df['t'].astype(float)
+    except:
+        df['m%'] = 'ns'
     df['MgS'] = ''
     df['N'] = ''
     df['NaS'] = ''
